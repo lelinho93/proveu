@@ -1,8 +1,8 @@
-# Backend Controle de Jornada de Trabalho - Projeto para seleção Proveu
+# Controle de Jornada de Trabalho (Backend) - Projeto para seleção Proveu
 
 * Objetivo: 
 
-Fazer a contabilidade dos dados de uma jornada de trabalho recebidos pelo frontend, onde o usuário informa um nome, uma data de entrada, um horário de entrada, uma data de saída e um horário de saída. 
+Fazer a contabilidade de uma jornada de trabalho recebidos pelo frontend, onde o usuário informa um nome, uma data de entrada, um horário de entrada, uma data de saída e um horário de saída. 
 
 * Lógica: 
 
@@ -14,4 +14,4 @@ O código está escrito em typescript, usando a lib Express.js para criar um ser
 
 * Como rodar?
 
-Para rodar é necessário estar com o repositório clonado em sua maquina e ter o node.js instalado. Após clonar o repositório, acessar a pasta raiz do backend e dar o comando "npm install" para instalar as dependencias necessárias. Após isso é só rodar o comando "npm run dev" que o servidor começa rodar automaticamente e já está pronto para receber e responder as requisições que chegarem.
+Para rodar é necessário estar com o repositório clonado em sua máquina e ter o node.js instalado. Após clonar o repositório, acessar a pasta raiz do backend com o terminal e dar o comando "npm install" para instalar as dependencias necessárias. Após isso é só rodar o comando "npm run dev" que o servidor começa rodar automaticamente e já está pronto para receber e responder as requisições que chegarem.
