@@ -4,16 +4,20 @@ export default function calculateHours (req: Request, res: Response) {
 
     try {
 
-        if(!req.body.name || !req.body.startDate || !req.body.startHour || !req.body.endHour) {
+        if(!req.body.name || !req.body.startDate || !req.body.endDate || !req.body.startHour || !req.body.endHour) {
             throw new Error("Todos os campos devem ser preenchidos!")
         }
-        const start = new Date(req.body.startDate + "T" + req.body.startHour + ":00").getTime()
-        const end = new Date(req.body.endDate + "T" + req.body.endHour + ":00").getTime()
+        const name = req.body.name
+        const startHour = req.body.startHour
+        const endHour = req.body.endHour
+        const startDate = req.body.startDate
+        const endDate = req.body.endDate
+        const start = new Date(startDate + "T" + startHour + ":00").getTime()
+        const end = new Date(endDate + "T" + endHour + ":00").getTime()
 
         if(start >= end)  {
             throw new Error("A hora/data de saída deve ser depois da entrada!")
-        } 
-        
+        }      
 
         const diff =  ((end - start) / 1000) / 3600
 
@@ -21,37 +25,82 @@ export default function calculateHours (req: Request, res: Response) {
             throw new Error("O horário máximo permitido é de 24h.")
         }
 
-       res.status(200).send(`Olá ${req.body.name}, você trabalhou ${diff} horas no total.`)
 
-       } catch(error) {
+        if((startHour.split(":")[0] >= 5 && startHour.split(":")[0] < 22) && (endHour.split(":")[0] >= 5 && endHour.split(":")[0] <= 22)){
+
+            const hoursDiff =  new Date (end - start) 
+            const hour = hoursDiff.getUTCHours()
+            const minutes = hoursDiff.getMinutes()
+            const diff = hour + ":" + minutes              
+
+            res.status(200).send(`Olá ${name}, você trabalhou ${diff} horas diurnas.`)
+
+
+
+        } else if ((startHour.split(":")[0] >= 22 || startHour.split(":")[0] < 5) && (endHour.split(":")[0] >= 22 || endHour.split(":")[0] <= 5)){
+               
+            const hoursDiff =  new Date (end - start) 
+            const hour = hoursDiff.getUTCHours()
+            const minutes = hoursDiff.getMinutes()
+            const diff = hour + ":" + minutes 
+
+            res.status(200).send(`Olá ${name}, você trabalhou ${diff} horas noturnas.`) 
+
+
+
+        } else if ((startHour.split(":")[0] >= 5 && startHour.split(":")[0] < 22) && (endHour.split(":")[0] >= 22 || endHour.split(":")[0] < 5)){
+
+            function hourDayDiff(start: any, end: any){
+                const hoursDiff = new Date (end - start)
+                const hour = hoursDiff.getUTCHours()
+                const minutes = hoursDiff.getMinutes()
+                const diff = hour + ":" + minutes 
+                return diff
+            }   
+            const dayDiff = hourDayDiff(start, new Date (startDate + "T22:00:00"))
+
+            
+            function hourNightDiff(start: any, end: any){
+                const hoursDiff = new Date (end - start)
+                const hour = hoursDiff.getUTCHours()
+                const minutes = hoursDiff.getMinutes()
+                const diff = hour + ":" + minutes 
+                return diff             
+                
+            } 
+            const nightDiff = hourNightDiff( new Date(endDate + "T22:00:00"), end)
+
+            res.status(200).send(`${name}, você trabalhou ${dayDiff} horas diurnas e ${nightDiff} horas noturnas.`)                       
+            
+            
+           
+
+            } else if ((startHour.split(":")[0] >= 22 || startHour.split(":")[0] < 5) && (endHour.split(":")[0] > 5 && endHour.split(":")[0] < 22)){
+
+                function hourNightDiff(start: any, end: any){
+                    const hoursDiff = new Date (end - start)
+                    const hour = hoursDiff.getUTCHours()
+                    const minutes = hoursDiff.getMinutes()
+                    const diff = hour + ":" + minutes 
+                    return diff                    
+                    
+                } 
+                const nightDiff = hourNightDiff(start, new Date(startDate + "T05:00:00"))
+
+
+                function hourDayDiff(start: any, end: any){
+                    const hoursDiff = new Date (end - start)
+                    const hour = hoursDiff.getUTCHours()
+                    const minutes = hoursDiff.getMinutes()
+                    const diff = hour + ":" + minutes 
+                    return diff                     
+                } 
+                const dayDiff = hourDayDiff( new Date(endDate + "T05:00:00"), end)   
+                
+                res.status(200).send(`${name} você trabalhou ${nightDiff} horas noturnas e ${dayDiff} horas diurnas`)
+            }   
+
+    } catch(error) {
         res.status(400).send(error.message)
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const start = req.body.startHour.split(":")
-        // const end = req.body.endHour.split(":")
-
-        // if(start[0] >= 5 && end[0] < 22 ) {
-
-       
-        // let min = end[1] - start[1]
-        // let hour_carry = 0
-
-        // if(min < 0) {
-        //     min += 60
-        //     hour_carry += 1
-        // }
-        // let hour = end[0] - start[0] - hour_carry
-        // let diff = hour + ":" + min 
